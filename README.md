@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Final_proj
 web project 
 =======
@@ -71,4 +71,4 @@ export default tseslint.config([
   },
 ])
 ```
->>>>>>> cdf5616 (First commit)
+
