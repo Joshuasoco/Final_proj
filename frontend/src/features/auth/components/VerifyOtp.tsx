@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Mail, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Mail, RefreshCw, CheckCircle, AlertCircle, KeyRound } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useVerifyOtp } from '../hooks/useVerifyOtp';
 import type { Variants } from 'framer-motion';
@@ -129,9 +129,9 @@ const cardVariants: Variants = {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full mx-auto mb-4"
+          className="flex items-center justify-center w-16 h-16 bg-black dark:bg-blue-900/30 rounded-full mx-auto mb-4"
         >
-          <Mail className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+          <KeyRound className="w-8 h-8 text-blue-600 dark:text-blue-400" />
         </motion.div>
         
         <motion.h1

@@ -1,8 +1,8 @@
 // src/features/auth/components/LoginForm.tsx
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Eye, EyeOff, Mail, Lock, LogIn, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,6 +23,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 }) => {
   const { viewModel, actions } = useLoginViewModel();
   const [showPassword, setShowPassword] = React.useState(false);
+  
+  // Add email validation state
+  const [isValidEmail, setIsValidEmail] = React.useState(false);
+
+  // Add email validation effect
+  React.useEffect(() => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setIsValidEmail(emailRegex.test(viewModel.formData.email));
+  }, [viewModel.formData.email]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,6 +96,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         </motion.div>
       )}
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Email Field with Real-time Validation */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -97,7 +107,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             Email Address
           </Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Mail className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 transition-colors duration-200 ${
+              viewModel.formData.email && !isValidEmail 
+                ? 'text-red-400' 
+                : isValidEmail 
+                  ? 'text-green-400'
+                  : 'text-gray-400'
+            }`} />
             <motion.div variants={inputVariants} whileFocus="focus" initial="blur">
               <Input
                 id="email"
@@ -105,15 +121,50 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 placeholder="Enter your email"
                 value={viewModel.formData.email}
                 onChange={(e) => actions.updateField('email', e.target.value)}
-                className={`pl-10 ${
+                className={`pl-10 pr-10 transition-all duration-200 ${
                   viewModel.validationErrors.email
                     ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : ''
+                    : viewModel.formData.email && !isValidEmail
+                      ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
+                      : isValidEmail
+                        ? 'border-green-300 focus:border-green-500 focus:ring-green-200'
+                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200'
                 }`}
                 disabled={viewModel.status === 'loading'}
               />
             </motion.div>
+            
+            {/* Success Check Icon */}
+            <AnimatePresence>
+              {isValidEmail && !viewModel.validationErrors.email && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-green-500" />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
+          
+          {/* Real-time Email Validation Error */}
+          <AnimatePresence>
+            {viewModel.formData.email && !isValidEmail && !viewModel.validationErrors.email && (
+              <motion.p
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="text-sm text-red-600 dark:text-red-400"
+              >
+                Please enter a valid email address
+              </motion.p>
+            )}
+          </AnimatePresence>
+          
+          {/* Server-side Validation Error */}
           {viewModel.validationErrors.email && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
@@ -125,6 +176,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           )}
         </motion.div>
 
+        {/* Password Field (unchanged) */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -170,6 +222,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           )}
         </motion.div>
 
+        {/* Remember Me and Forgot Password (unchanged) */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -200,6 +253,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           </button>
         </motion.div>
 
+        {/* Submit Button - Updated to consider email validation */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -214,7 +268,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           >
             <Button
               type="submit"
-              disabled={!viewModel.canSubmit}
+              disabled={!viewModel.canSubmit || !isValidEmail}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-md transition-colors"
             >
               {viewModel.status === 'loading' ? (

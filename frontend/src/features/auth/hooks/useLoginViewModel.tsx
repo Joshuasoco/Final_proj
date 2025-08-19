@@ -21,9 +21,18 @@ export const useLoginViewModel = () => {
     return !hasValidationErrors(errors) && formData.email.length > 0 && formData.password.length > 0;
   }, [formData]);
 
+  // Add email validation to your canSubmit logic
   const canSubmit = useMemo(() => {
-    return isFormValid && status !== 'loading';
-  }, [isFormValid, status]);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isEmailValid = emailRegex.test(formData.email);
+    
+    return (
+      isEmailValid && // Add this line
+      formData.password.trim() !== '' &&
+      status !== 'loading' &&
+      Object.keys(validationErrors).length === 0
+    );
+  }, [formData, validationErrors, status]);
 
   const updateField = useCallback((field: keyof LoginFormData, value: string | boolean) => {
     setFormData(prev => ({

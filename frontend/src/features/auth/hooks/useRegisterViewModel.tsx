@@ -1,5 +1,3 @@
-
-
 // src/features/auth/hooks/useRegisterViewModel.ts
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
@@ -49,12 +47,24 @@ export const useRegisterViewModel = () => {
            formData.agreeToTerms;
   }, [formData]);
 
+  // Add email validation to your canSubmit logic
   const canSubmit = useMemo(() => {
-    return isFormValid && 
-           status !== 'loading' && 
-           emailStatus !== 'checking' &&
-           passwordStrength.score >= 3;
-  }, [isFormValid, status, emailStatus, passwordStrength]);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isEmailValid = emailRegex.test(formData.email);
+    
+    return (
+      formData.firstName.trim() !== '' &&
+      formData.lastName.trim() !== '' &&
+      formData.username.trim() !== '' &&
+      isEmailValid && // Add this line
+      formData.password !== '' &&
+      formData.passwordConfirm !== '' &&
+      formData.password === formData.passwordConfirm &&
+      formData.agreeToTerms &&
+      status !== 'loading' &&
+      Object.keys(validationErrors).length === 0
+    );
+  }, [formData, validationErrors, status]);
 
   // Debounced email availability check
   useEffect(() => {

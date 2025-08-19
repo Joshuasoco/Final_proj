@@ -1,7 +1,7 @@
 // src/features/auth/components/RegisterForm.tsx
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Eye, 
   EyeOff, 
@@ -11,7 +11,8 @@ import {
   UserPlus, 
   Check, 
   AlertCircle,
-  Loader2
+  Loader2,
+  CheckCircle2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,6 +36,12 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   const { viewModel, actions } = useRegisterViewModel();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = React.useState(false);
+  const [isValidEmail, setIsValidEmail] = React.useState(false);
+
+  React.useEffect(() => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setIsValidEmail(emailRegex.test(viewModel.formData.email));
+  }, [viewModel.formData.email]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,7 +122,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
               <Input
                 id="firstName"
                 type="text"
-                placeholder="John"
+                placeholder="jos"
                 value={viewModel.formData.firstName}
                 onChange={(e) => actions.updateField('firstName', e.target.value)}
                 className={`${
@@ -151,7 +158,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
               <Input
                 id="lastName"
                 type="text"
-                placeholder="Doe"
+                placeholder="lastname"
                 value={viewModel.formData.lastName}
                 onChange={(e) => actions.updateField('lastName', e.target.value)}
                 className={`${
@@ -191,7 +198,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
               <Input
                 id="username"
                 type="text"
-                placeholder="johndoe"
+                placeholder="Joshdoe"
                 value={viewModel.formData.username}
                 onChange={(e) => actions.updateField('username', e.target.value)}
                 className={`pl-10 ${
@@ -215,7 +222,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           )}
         </motion.div>
 
-        {/* Email Field */}
+        {/* Email Field with Real-time Validation */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -226,47 +233,72 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             Email Address
           </Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Mail className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 transition-colors duration-200 ${
+              viewModel.formData.email && !isValidEmail 
+                ? 'text-red-400' 
+                : isValidEmail 
+                  ? 'text-green-400'
+                  : 'text-gray-400'
+            }`} />
             <motion.div variants={inputVariants} whileFocus="focus" initial="blur">
               <Input
                 id="email"
                 type="email"
-                placeholder="john@example.com"
+                placeholder="Enter your email address"
                 value={viewModel.formData.email}
                 onChange={(e) => actions.updateField('email', e.target.value)}
-                className={`pl-10 pr-10 ${
-                  viewModel.validationErrors.email || viewModel.emailStatus === 'taken'
+                className={`pl-10 pr-10 transition-all duration-200 ${
+                  viewModel.validationErrors.email
                     ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : viewModel.emailStatus === 'available'
-                    ? 'border-green-500 focus:border-green-500 focus:ring-green-500'
-                    : ''
+                    : viewModel.formData.email && !isValidEmail
+                      ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
+                      : isValidEmail
+                        ? 'border-green-300 focus:border-green-500 focus:ring-green-200'
+                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200'
                 }`}
                 disabled={viewModel.status === 'loading'}
               />
             </motion.div>
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              {getEmailStatusIcon()}
-            </div>
+            
+            {/* Success Check Icon */}
+            <AnimatePresence>
+              {isValidEmail && !viewModel.validationErrors.email && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-green-500" />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
+          
+          {/* Real-time Email Validation Error */}
+          <AnimatePresence>
+            {viewModel.formData.email && !isValidEmail && !viewModel.validationErrors.email && (
+              <motion.p
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="text-sm text-red-600 dark:text-red-400"
+              >
+                Please enter a valid email address
+              </motion.p>
+            )}
+          </AnimatePresence>
+          
+          {/* Server-side Validation Error */}
           {viewModel.validationErrors.email && (
             <motion.p
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               transition={{ duration: 0.3 }}
-              className="text-sm text-red-600"
+              className="text-sm text-red-600 dark:text-red-400"
             >
               {viewModel.validationErrors.email}
-            </motion.p>
-          )}
-          {viewModel.emailStatus === 'available' && !viewModel.validationErrors.email && (
-            <motion.p
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{ duration: 0.3 }}
-              className="text-sm text-green-600 flex items-center"
-            >
-              <Check className="h-3 w-3 mr-1" />
-              Email is available
             </motion.p>
           )}
         </motion.div>
@@ -467,7 +499,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           >
             <Button
               type="submit"
-              disabled={!viewModel.canSubmit}
+              disabled={!viewModel.canSubmit || !isValidEmail}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-md transition-colors"
             >
               {viewModel.status === 'loading' ? (
