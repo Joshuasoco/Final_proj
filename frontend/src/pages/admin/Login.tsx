@@ -20,26 +20,6 @@ export const LoginPage: React.FC = () => {
     // You could show a toast notification here
   };
 
-  const backgroundVariants = {
-    initial: { 
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
-    },
-    animate: { 
-      background: [
-        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-        'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-      ],
-      transition: {
-        duration: 10,
-        repeat: Infinity,
-        repeatType: 'reverse' as const,
-        ease: 'linear' as const
-      }
-    }
-  };
-
   const containerVariants = {
     initial: { opacity: 0 },
     animate: { 
@@ -78,7 +58,6 @@ export const LoginPage: React.FC = () => {
 
   return (
     <motion.div
-      variants={backgroundVariants}
       initial="initial"
       animate="animate"
       className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
@@ -142,7 +121,7 @@ export const LoginPage: React.FC = () => {
           transition={{ delay: 1, duration: 0.5 }}
           className="text-center mt-6"
         >
-          <div className="text-center text-white/80 text-sm text-balance">
+          <div className="text-center text-black/80 text-sm text-balance">
             By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
             and <a href="#">Privacy Policy</a>.
           </div>

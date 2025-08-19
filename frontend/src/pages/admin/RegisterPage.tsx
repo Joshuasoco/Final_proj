@@ -27,27 +27,7 @@ export const RegisterPage: React.FC = () => {
     console.error('Registration error:', error);
   };
 
-  // Define types for variants
-  const backgroundVariants: Variants = {
-    initial: { 
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
-    },
-    animate: { 
-      background: [
-        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-        'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-        'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-      ],
-      transition: {
-        duration: 15,
-        repeat: Infinity,
-        repeatType: 'reverse',
-        ease: 'linear'
-      }
-    }
-  };
+  
 
   const containerVariants: Variants = {
     initial: { opacity: 0 },
@@ -68,7 +48,7 @@ export const RegisterPage: React.FC = () => {
       scale: 1,
       transition: {
         duration: 0.6,
-        ease: 'easeOut' // Acceptable string literals
+        ease: 'easeOut' 
       }
     }
   };
@@ -100,7 +80,6 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <motion.div
-      variants={backgroundVariants}
       initial="initial"
       animate="animate"
       className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
@@ -179,15 +158,15 @@ export const RegisterPage: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.5 }}
-          className="text-center mt-6"
+          className="text-center mt-2"
         >
-          <p className="text-white/80 text-sm">
+          <p className="text-black/80 text-sm">
             Already have an account?{' '}
             <button
               onClick={() => navigate('/login')}
-              className="text-white font-semibold hover:text-white/90 underline underline-offset-2 transition-colors"
+              className="text-blue font-semibold hover:text-blue/90 underline underline-offset-2 transition-colors cursor-pointer"
             >
-              Sign in here
+              Log in
             </button>
           </p>
         </motion.div>

@@ -193,6 +193,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           </div>
           <button
             type="button"
+            onClick={() => window.location.href = '/forgot-password'}
             className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer"
           >
             Forgot password?

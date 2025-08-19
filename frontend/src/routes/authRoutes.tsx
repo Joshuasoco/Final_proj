@@ -4,10 +4,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '@/features/auth/context/AuthContext';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
-import LoginPage from '@/pages/Login';
-import DashboardPages from '@/pages/DashboardPage';
+import LoginPage from '@/pages/admin/Login';
+import DashboardPages from '@/pages/admin/DashboardPage';
 import { useAuth } from '@/features/auth/context/AuthContext';
-import RegisterPage from '@/pages/RegisterPage';
+import RegisterPage from '@/pages/admin/RegisterPage';
 
 // Component to handle authenticated redirects
 const AuthenticatedRedirect: React.FC = () => {
